@@ -1,5 +1,3 @@
-from typing import Anyfrom typing import Mapping
-
 # ktx
 
 ## Introduction
