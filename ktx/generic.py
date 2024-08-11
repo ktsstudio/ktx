@@ -124,6 +124,8 @@ class GenericContext(Context[DataT], Generic[DataT]):
         def __exit__(self, exc_type, exc_val, exc_tb):
             if self._token is not None:
                 detach_current_ctx(self._token)
+                self._token = None
+
             if self._sentry_scope_cm is not None:
                 self._sentry_scope_cm.__exit__(exc_type, exc_val, exc_tb)
                 self._sentry_scope_cm = None
@@ -137,3 +139,4 @@ class GenericContext(Context[DataT], Generic[DataT]):
         def __exit__(self, exc_type, exc_val, exc_tb):
             if self._token is not None:
                 detach_current_ctx(self._token)
+                self._token = None

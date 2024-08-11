@@ -24,8 +24,6 @@ class Context(Protocol[DataT]):
     @property
     def user(self) -> ContextUser: ...
 
-    def __enter__(self) -> Self:
-        return self
+    def __enter__(self) -> Self: ...
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        return
+    def __exit__(self, exc_type, exc_val, exc_tb): ...
