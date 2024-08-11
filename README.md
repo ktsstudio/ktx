@@ -1,27 +1,27 @@
 from typing import Anyfrom typing import Mapping
 
-# kontext
+# ktx
 
 ## Introduction
 
-Kontext is a Context library aimed to simplify a process of creating and managing shared data in Python.
+ktx is a Context library aimed to simplify a process of creating and managing shared data in Python.
 
 Quick example:
 
 ```python
 
-from kontext.simple import SimpleContext
+from ktx.simple import SimpleContext
 
 with SimpleContext() as ctx:
     ctx.data.some_attribute = "value1"
 
 ```
 
-While within the context manager the Context is available using `kontext.get_current_context()` function:
+While within the context manager the Context is available using `ktx.get_current_context()` function:
 
 ```python
-from kontext import get_current_ctx
-from kontext.simple import SimpleContext
+from ktx import get_current_ctx
+from ktx.simple import SimpleContext
 
 with SimpleContext() as ctx:
     ctx.data.some_attribute = "value1"
@@ -35,12 +35,14 @@ But also (thanks for `ContextVar`) is available in any place of current courotin
 ````python
 import asyncio
 
-from kontext import get_current_ctx
-from kontext.simple import SimpleContext
+from ktx import get_current_ctx
+from ktx.simple import SimpleContext
+
 
 async def f1():
     ctx = get_current_ctx()
     assert ctx.data.some_attribute == "value1"
+
 
 async def main():
     with SimpleContext() as ctx:
@@ -51,14 +53,14 @@ async def main():
     await task1
 ````
 
-There exists an abstract interface (Protocol) for any "kind of Contex", so you may implement your own Context classes by implementing `kontext.abc.Context` protocol:
+There exists an abstract interface (Protocol) for any "kind of Contex", so you may implement your own Context classes by implementing `ktx.abc.Context` protocol:
 
 ## Data Inheritance
 
 This is best described using the following snippet:
 
 ```python
-from kontext.simple import SimpleContext
+from ktx.simple import SimpleContext
 
 with SimpleContext() as parent_ctx:
     parent_ctx.data.attr1 = "val1"
@@ -78,7 +80,7 @@ with SimpleContext() as parent_ctx:
 
 ## Logging
 
-There is a helper function `kontext.log.kontext_add_log` that propagates all Context-specific attributes to a logging event dict.
+There is a helper function `ktx.log.ktx_add_log` that propagates all Context-specific attributes to a logging event dict.
 
 ## Custom data
 
@@ -87,8 +89,8 @@ It is possible to define a custom data class in order to better support strong t
 ```python
 from typing import Mapping, Any, Self
 
-from kontext.abc import AbstractData
-from kontext.generic import GenericContext
+from ktx.abc import AbstractData
+from ktx.generic import GenericContext
 
 
 class MyData(AbstractData):

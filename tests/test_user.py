@@ -1,6 +1,6 @@
 from sentry_sdk import get_isolation_scope
 
-from kontext.user import ContextUser
+from ktx.user import ContextUser
 
 
 class TestContextUser:

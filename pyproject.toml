@@ -1,5 +1,5 @@
 [project]
-name = "kontext"
+name = "ktx"
 version = "0.1.0"
 description = "context library"
 authors = [
@@ -45,7 +45,7 @@ build-backend = "setuptools.build_meta"
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-kontext = ["py.typed"]
+ktx = ["py.typed"]
 
 [[tool.mypy.overrides]]
 module = '*.*'

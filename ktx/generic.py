@@ -4,10 +4,10 @@ from typing import ContextManager, Generic, Self, TypeVar
 
 import typing_inspect
 
-from kontext._meta import has_open_telemetry, has_sentry
-from kontext.abc import AbstractData, Context
-from kontext.user import ContextUser
-from kontext.vars import attach_current_ctx, detach_current_ctx, get_current_ctx_or_none
+from ktx._meta import has_open_telemetry, has_sentry
+from ktx.abc import AbstractData, Context
+from ktx.user import ContextUser
+from ktx.vars import attach_current_ctx, detach_current_ctx, get_current_ctx_or_none
 
 if has_sentry:
     from sentry_sdk import Scope, new_scope
@@ -118,8 +118,6 @@ class GenericContext(Context[DataT], Generic[DataT]):
             scope = self._sentry_scope_cm.__enter__()
             scope.set_tag("uq_id", self.uq_id)
             scope.set_extra("uq_id", self.uq_id)
-
-            self._user.set_sentry_user()
 
             return self
 

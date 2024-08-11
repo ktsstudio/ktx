@@ -1,7 +1,7 @@
 import pytest
 from sentry_sdk import get_current_scope, new_scope
 
-from kontext.simple import SimpleContextDataObject
+from ktx.simple import SimpleContextDataObject
 
 
 class TestSimpleData:

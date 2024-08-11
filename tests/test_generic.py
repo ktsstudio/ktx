@@ -1,11 +1,11 @@
 import pytest
 from sentry_sdk import get_current_scope
 
-from kontext import get_current_ctx_or_none
-from kontext.abc import AbstractData
-from kontext.generic import GenericContext
-from kontext.simple import SimpleContext, SimpleContextDataObject
-from kontext.user import ContextUser
+from ktx import get_current_ctx_or_none
+from ktx.abc import AbstractData
+from ktx.generic import GenericContext
+from ktx.simple import SimpleContext, SimpleContextDataObject
+from ktx.user import ContextUser
 
 
 class Bar(AbstractData):
@@ -79,5 +79,5 @@ class TestGeneric:
 
             assert (
                 str(e.value)
-                == "cannot inherit data from type <class 'kontext.simple.SimpleContextDataObject'> to different type <class 'tests.test_generic.Bar'>"
+                == "cannot inherit data from type <class 'ktx.simple.SimpleContextDataObject'> to different type <class 'tests.test_generic.Bar'>"
             )

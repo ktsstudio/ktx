@@ -6,7 +6,7 @@ from .vars import get_current_ctx_or_none
 DataT = TypeVar("DataT", bound=AbstractData)
 
 
-def kontext_add_log(
+def ktx_add_log(
     event_dict: MutableMapping[str, Any],
     ctx: Context[DataT] | None = None,
     *,

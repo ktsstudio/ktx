@@ -1,6 +1,6 @@
 .PHONY: mypy ruff style style-check test lint pytest
 
-package?=kontext tests
+package?=ktx tests
 
 style:
 	python -m ruff format $(package)
