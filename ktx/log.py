@@ -1,4 +1,4 @@
-from typing import Any, MutableMapping, TypeVar
+from typing import Any, ItemsView, Iterator, MutableMapping, TypeVar
 
 from .abc import AbstractData, Context
 from .vars import get_current_ctx_or_none
@@ -20,23 +20,25 @@ def ktx_add_log(
         return event_dict
 
     data_dict = ctx.data.to_dict()
-    if not log_private:
-        data_dict = {k: v for k, v in data_dict.items() if not k.startswith("_")}
 
-    user_dict = {}
+    data_dict_iter: Iterator[tuple[str, Any]] | ItemsView[str, Any]
+    if not log_private:
+        data_dict_iter = ((k, v) for k, v in data_dict.items() if not k.startswith("_"))
+    else:
+        data_dict_iter = data_dict.items()
+
+    for k, v in data_dict_iter:
+        event_dict[f"data_{k}"] = v
+
     if ctx.user.id is not None:
-        user_dict["id"] = ctx.user.id
+        event_dict["user_id"] = ctx.user.id
     if ctx.user.username is not None:
-        user_dict["username"] = ctx.user.username
+        event_dict["user_username"] = ctx.user.username
     if ctx.user.email is not None:
-        user_dict["email"] = ctx.user.email
+        event_dict["user_email"] = ctx.user.email
     if ctx.user.ip is not None:
-        user_dict["ip"] = ctx.user.ip
+        event_dict["user_ip"] = ctx.user.ip
 
     event_dict["uq_id"] = ctx.uq_id
-    event_dict["data"] = data_dict
-
-    if len(user_dict) > 0:
-        event_dict["user"] = user_dict
 
     return event_dict
