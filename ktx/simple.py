@@ -1,11 +1,17 @@
-from typing import Any, Mapping, Self
+from collections.abc import Mapping
+from typing import Any
 
 import sentry_sdk
 from immutabledict import immutabledict
 
-from ._meta import has_sentry
+from ._meta import PY311, has_sentry
 from .abc import AbstractData
 from .generic import GenericContext
+
+if PY311:
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 
 class SimpleContextDataObject(AbstractData):

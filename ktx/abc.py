@@ -1,6 +1,13 @@
-from typing import Any, Mapping, Protocol, Self, TypeVar, runtime_checkable
+from collections.abc import Mapping
+from typing import Any, Protocol, TypeVar, runtime_checkable
 
+from ._meta import PY311
 from .user import ContextUser
+
+if PY311:
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 
 @runtime_checkable

@@ -1,16 +1,22 @@
 import uuid
+from contextlib import AbstractContextManager
 from contextvars import Token
-from typing import ContextManager, Generic, Self, TypeVar
+from typing import Generic, TypeVar
 
 import typing_inspect
 
-from ktx._meta import has_open_telemetry, has_sentry
+from ktx._meta import PY311, has_open_telemetry, has_sentry
 from ktx.abc import AbstractData, Context
 from ktx.user import ContextUser
 from ktx.vars import attach_current_ctx, detach_current_ctx, get_current_ctx_or_none
 
 if has_sentry:
     from sentry_sdk import Scope, new_scope
+
+if PY311:
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 
 def _get_uuid_uq_id() -> str:
@@ -62,7 +68,7 @@ class GenericContext(Context[DataT], Generic[DataT]):
 
         self._token: Token | None = None
         if has_sentry:
-            self._sentry_scope_cm: ContextManager["Scope"] | None = None
+            self._sentry_scope_cm: AbstractContextManager["Scope"] | None = None
 
         if inherit_user or inherit_data:
             parent_ctx = get_current_ctx_or_none()

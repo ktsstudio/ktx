@@ -15,8 +15,8 @@ class TestLog:
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
             "uq_id": "some-trace-id",
-            "data": {"attr1": "value1"},
-            "user": {"username": "some-username"},
+            "data_attr1": "value1",
+            "user_username": "some-username",
         }
 
     def test_event_dict_indirect_ctx(self):
@@ -28,8 +28,8 @@ class TestLog:
             assert ktx_add_log(event_dict) == {
                 **event_dict,
                 "uq_id": "some-trace-id",
-                "data": {"attr1": "value1"},
-                "user": {"username": "some-username"},
+                "data_attr1": "value1",
+                "user_username": "some-username",
             }
 
     def test_event_dict_direct_ctx_no_private(self):
@@ -41,6 +41,6 @@ class TestLog:
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
             "uq_id": "some-trace-id",
-            "data": {"attr1": "value1"},
-            "user": {"username": "some-username"},
+            "data_attr1": "value1",
+            "user_username": "some-username",
         }

@@ -1,4 +1,5 @@
-from typing import Any, ItemsView, Iterator, MutableMapping, TypeVar
+from collections.abc import ItemsView, Iterator, MutableMapping
+from typing import Any, TypeVar
 
 from .abc import AbstractData, Context
 from .vars import get_current_ctx_or_none
