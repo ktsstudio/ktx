@@ -29,10 +29,11 @@ def ktx_add_log(
         data_dict_iter = data_dict.items()
 
     for k, v in data_dict_iter:
-        event_dict[f"data_{k}"] = v
+        if v is not None:
+            event_dict[f"data_{k}"] = str(v)
 
     if ctx.user.id is not None:
-        event_dict["user_id"] = ctx.user.id
+        event_dict["user_id"] = str(ctx.user.id)
     if ctx.user.username is not None:
         event_dict["user_username"] = ctx.user.username
     if ctx.user.email is not None:

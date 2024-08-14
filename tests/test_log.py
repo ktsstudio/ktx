@@ -1,3 +1,5 @@
+import uuid
+
 from ktx.log import ktx_add_log
 from ktx.simple import SimpleContext
 
@@ -43,4 +45,37 @@ class TestLog:
             "uq_id": "some-trace-id",
             "data_attr1": "value1",
             "user_username": "some-username",
+        }
+
+    def test_str_value(self):
+        event_dict = {"some": "value"}
+        ctx = SimpleContext("some-trace-id")
+
+        val = uuid.uuid4()
+        ctx.data.attr1 = val
+        assert ktx_add_log(event_dict, ctx) == {
+            **event_dict,
+            "uq_id": "some-trace-id",
+            "data_attr1": str(val),
+        }
+
+    def test_none_values(self):
+        event_dict = {"some": "value"}
+        ctx = SimpleContext("some-trace-id")
+
+        ctx.data.attr1 = None
+        assert ktx_add_log(event_dict, ctx) == {
+            **event_dict,
+            "uq_id": "some-trace-id",
+        }
+
+    def test_user_id_non_str(self):
+        event_dict = {"some": "value"}
+        ctx = SimpleContext("some-trace-id")
+
+        ctx.user.id = uuid.uuid4()
+        assert ktx_add_log(event_dict, ctx) == {
+            **event_dict,
+            "uq_id": "some-trace-id",
+            "user_id": str(ctx.user.id),
         }
