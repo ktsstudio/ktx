@@ -1,6 +1,4 @@
-from ktx.wrap import ctx_wrap
-
-# ktx
+# ktx - Shared context library
 
 ## Introduction
 
