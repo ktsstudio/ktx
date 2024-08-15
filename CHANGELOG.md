@@ -1,3 +1,8 @@
+# 0.2.0
+* simplify context - it is not longer a Generic class/Protocol
+* added ctx_wrap function that attached context to ContextVar
+* removed GenericContext
+
 # 0.1.4
 * log: serialize data fields and user id always as str
 

@@ -1,36 +1,33 @@
 from collections.abc import Mapping
 from typing import Any, Protocol, TypeVar, runtime_checkable
 
-from ._meta import PY311
 from .user import ContextUser
 
-if PY311:
-    from typing import Self
-else:
-    from typing_extensions import Self
-
 
 @runtime_checkable
-class AbstractData(Protocol):
-    def to_dict(self) -> Mapping[str, Any]: ...
-
-    def copy_from(self, other: Self) -> None: ...
-
-
-DataT = TypeVar("DataT", bound=AbstractData, covariant=True)
-
-
-@runtime_checkable
-class Context(Protocol[DataT]):
-    @property
+class Context(Protocol):
     def uq_id(self) -> str: ...
 
-    @property
-    def data(self) -> DataT: ...
+    def get_data(self) -> Mapping[str, Any]: ...
 
-    @property
-    def user(self) -> ContextUser: ...
+    def get(self, key: str) -> Any: ...
 
-    def __enter__(self) -> Self: ...
+    def set(self, key: str, value: Any): ...
 
-    def __exit__(self, exc_type, exc_val, exc_tb): ...
+    def get_user(self) -> ContextUser: ...
+
+
+ContextT = TypeVar("ContextT", bound=Context, covariant=True)
+
+
+@runtime_checkable
+class AbstractContextWrap(Protocol[ContextT]):
+    def attach(self) -> ContextT: ...
+
+    def detach(self) -> None: ...
+
+    def __enter__(self) -> ContextT:
+        return self.attach()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.detach()

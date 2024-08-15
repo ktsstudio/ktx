@@ -1,5 +1,4 @@
 immutabledict
-typing_inspect
 sentry-sdk>=2.11.0
 opentelemetry-api
 opentelemetry-sdk

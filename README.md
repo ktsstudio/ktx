@@ -1,3 +1,5 @@
+from ktx.wrap import ctx_wrap
+
 # ktx
 
 ## Introduction
@@ -7,28 +9,26 @@ ktx is a Context library aimed to simplify a process of creating and managing sh
 Quick example:
 
 ```python
-
 from ktx.simple import SimpleContext
 
-with SimpleContext() as ctx:
-    ctx.data.some_attribute = "value1"
-
+ctx = SimpleContext()
+ctx.data.some_attribute = "value1"
 ```
 
-While within the context manager the Context is available using `ktx.get_current_context()` function:
+You may also set created Context object as *current* for current thread or asyncio.Task:
 
 ```python
-from ktx import get_current_ctx
+from ktx import ctx_wrap, get_current_ctx
 from ktx.simple import SimpleContext
 
-with SimpleContext() as ctx:
+with ctx_wrap(SimpleContext()) as ctx:
     ctx.data.some_attribute = "value1"
 
     ctx2 = get_current_ctx()
     assert ctx2 is ctx
 ```
 
-But also (thanks for `ContextVar`) is available in any place of current courotine in asyncio-world (note that asyncio-context is copied in the creating of new tasks):
+But also (thanks for `ContextVar`) context is available in any place of current coroutine in asyncio-world (note that asyncio-context is copied in the creating of new tasks):
 
 ````python
 import asyncio
@@ -39,7 +39,7 @@ from ktx.simple import SimpleContext
 
 async def f1():
     ctx = get_current_ctx()
-    assert ctx.data.some_attribute == "value1"
+    assert ctx.get("some_attribute") == "value1"
 
 
 async def main():
@@ -53,18 +53,29 @@ async def main():
 
 There exists an abstract interface (Protocol) for any "kind of Contex", so you may implement your own Context classes by implementing `ktx.abc.Context` protocol:
 
+## API
+
+Context provides the following methods:
+
+- `set(key: str, value: Any) -> Any`: set value by key
+- `get(key: str) -> Any`: get value by key
+- `get_data() -> Mapping[str, Any]`: get all shared data
+- `get_user() -> ContextUser`: get user object
+- `uq_id() -> str`: get unique id of context
+
 ## Data Inheritance
 
 This is best described using the following snippet:
 
 ```python
+from ktx import ctx_wrap
 from ktx.simple import SimpleContext
 
-with SimpleContext() as parent_ctx:
+with ctx_wrap(SimpleContext()) as parent_ctx:
     parent_ctx.data.attr1 = "val1"
     parent_ctx.data.attr2 = "val2"
 
-    with SimpleContext() as child_ctx:
+    with ctx_wrap(SimpleContext()) as child_ctx:
         assert child_ctx.data.attr1 == "val1"
         assert child_ctx.data.attr2 == "val2"
 
@@ -75,47 +86,62 @@ with SimpleContext() as parent_ctx:
 ```
 
 
-
 ## Logging
 
-There is a helper function `ktx.log.ktx_add_log` that propagates all Context-specific attributes to a logging event dict.
+### Structlog
+There is a helper function `ktx.log.ktx_add_log` useful for [structlog](https://structlog.org/) processors that propagates all Context-specific attributes to a logging event dict.
 
-## Custom data
+## Custom context
 
-It is possible to define a custom data class in order to better support strong typing. You need to define 2 functions - one for converting data to dict and second - for copying data from another similar object. For example:
+It is possible to define a custom Context class in order to better support strong typing. You would need to implement `ktx.abc.`Context protocol and then you may use it with `ctx_wrap` functions as usual.
+
+Note that you would need to implement general `get()` and `set()` methods for arbitrary fields as they may be accessed by other libraries which are using `Context`.
+
+And the `get_data()` method must return all *shared* data of this context so it will be available during logging. For example:
 
 ```python
-from typing import Mapping, Any, Self
+from typing import Mapping, Any
 
-from ktx.abc import AbstractData
-from ktx.generic import GenericContext
+from ktx.user import ContextUser
+from ktx.abc import Context
 
 
-class MyData(AbstractData):
-    some_attribute: str | None
+class MyContext(Context):  # Note that inheritance is not required.
+    def __init__(self, uq_id: str, *, custom_field: str):
+        self.custom_field = custom_field
 
-    def __init__(self):
-        self.some_attribute = None
+        self._uq_id = uq_id
+        self._data: dict[str, Any] = {}
+        self._user = ContextUser()
 
-    def to_dict(self) -> Mapping[str, Any]:
+    def uq_id(self) -> str:
+        return self._uq_id
+
+    def get_data(self) -> Mapping[str, Any]:
         return {
-            "some_attribute": self.some_attribute
+            **self._data,
+            "custom_field": self.custom_field,
         }
 
-    def copy_from(self, other: Self) -> None:
-        self.some_attribute = other.some_attribute
+    def get_user(self) -> ContextUser:
+        return self._user
 
+    def get(self, key: str) -> Any:
+        return self._data.get(key)
 
-class MyContext(GenericContext[MyData]):
-    pass
-
+    def set(self, key: str, value: Any):
+        self._data[key] = value
 ```
 
 
 And then you may use this `MyContext` in safe manner like this:
 
 ```python
-with MyContext() as ctx:
-    ctx.data.some_attribute = "value1"
+from ktx import ctx_wrap, get_current_ctx
+
+with ctx_wrap(MyContext()) as ctx:
+    ctx.custom_field = "value1"
+
+    assert get_current_ctx(MyContext) is ctx
 ```
 

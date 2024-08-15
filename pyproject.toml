@@ -1,6 +1,6 @@
 [project]
 name = "ktx"
-version = "0.1.4"
+version = "0.2.0"
 description = "context library"
 authors = [
     { name = "KTS", email = "hello@kts.tech" }
@@ -14,19 +14,16 @@ classifiers = [
     "Operating System :: POSIX",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-requires-python = '>=3.9.0'
+requires-python = '>=3.10.0'
 readme = "README.md"
 dependencies = [
     "immutabledict",
-    "typing_inspect",
-    "typing_extensions; python_version < '3.11'",
 ]
 
 [project.optional-dependencies]

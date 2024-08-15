@@ -1,5 +1,6 @@
 import uuid
 
+from ktx import ctx_wrap
 from ktx.log import ktx_add_log
 from ktx.simple import SimpleContext
 
@@ -13,7 +14,7 @@ class TestLog:
         event_dict = {"some": "value"}
         ctx = SimpleContext("some-trace-id")
         ctx.data.attr1 = "value1"
-        ctx.user.username = "some-username"
+        ctx.get_user().username = "some-username"
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
             "uq_id": "some-trace-id",
@@ -23,9 +24,9 @@ class TestLog:
 
     def test_event_dict_indirect_ctx(self):
         event_dict = {"some": "value"}
-        with SimpleContext("some-trace-id") as ctx:
+        with ctx_wrap(SimpleContext("some-trace-id")) as ctx:
             ctx.data.attr1 = "value1"
-            ctx.user.username = "some-username"
+            ctx.get_user().username = "some-username"
 
             assert ktx_add_log(event_dict) == {
                 **event_dict,
@@ -39,7 +40,7 @@ class TestLog:
         ctx = SimpleContext("some-trace-id")
         ctx.data.attr1 = "value1"
         ctx.data._attr2 = "value2"
-        ctx.user.username = "some-username"
+        ctx.get_user().username = "some-username"
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
             "uq_id": "some-trace-id",
@@ -73,9 +74,9 @@ class TestLog:
         event_dict = {"some": "value"}
         ctx = SimpleContext("some-trace-id")
 
-        ctx.user.id = uuid.uuid4()
+        ctx.get_user().id = uuid.uuid4()
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
             "uq_id": "some-trace-id",
-            "user_id": str(ctx.user.id),
+            "user_id": str(ctx.get_user().id),
         }
