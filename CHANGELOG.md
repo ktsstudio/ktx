@@ -1,3 +1,6 @@
+# 0.2.1
+* add `ctx` property to `ContextWrap`
+
 # 0.2.0
 * simplify context - it is not longer a Generic class/Protocol
 * added ctx_wrap function that attached context to ContextVar

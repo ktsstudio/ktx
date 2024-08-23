@@ -1,6 +1,6 @@
 [project]
 name = "ktx"
-version = "0.2.0"
+version = "0.2.1"
 description = "context library"
 authors = [
     { name = "KTS", email = "hello@kts.tech" }
@@ -35,6 +35,9 @@ all = [
 
 tests = [
     "pytest",
+    "mypy",
+    "ruff",
+    "deptry",
 ]
 
 [build-system]
@@ -55,9 +58,12 @@ check_untyped_defs = true
 [tool.pytest.ini_options]
 
 [tool.deptry.per_rule_ignores]
-DEP002 = []
+DEP002 = ["mypy", "ruff", "deptry"]
 DEP004 = []
 
+[tool.deptry.package_module_name_map]
+immutabledict = "immutabledict"
+sentry-sdk = "sentry_sdk"
 
 [tool.ruff.format]
 # Аналогично black, двойные кавычки

@@ -25,14 +25,19 @@ class ContextWrap(Generic[ContextT], AbstractContextWrap[ContextT]):
         if has_sentry:
             self._sentry_scope_cm: AbstractContextManager["Scope"] | None = None
 
+    @property
+    def ctx(self) -> ContextT:
+        return self._ctx
+
     def attach(self) -> ContextT:
         self._token = attach_current_ctx(self._ctx)
 
         if has_sentry:
             self._sentry_scope_cm = new_scope()
-            scope = self._sentry_scope_cm.__enter__()
-            scope.set_tag("uq_id", self._ctx.uq_id())
-            scope.set_extra("uq_id", self._ctx.uq_id())
+            if self._sentry_scope_cm is not None:
+                scope = self._sentry_scope_cm.__enter__()
+                scope.set_tag("uq_id", self._ctx.uq_id())
+                scope.set_extra("uq_id", self._ctx.uq_id())
 
         return self._ctx
 
