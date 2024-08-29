@@ -19,11 +19,12 @@ def _get_uuid_uq_id() -> str:
 
 if has_open_telemetry:
     from opentelemetry import trace
+    from opentelemetry.trace import format_trace_id
 
     def _get_uq_id() -> str:
         trace_id = trace.get_current_span().get_span_context().trace_id
         if trace_id != 0:
-            return hex(trace_id)
+            return format_trace_id(trace_id)
 
         return _get_uuid_uq_id()
 
