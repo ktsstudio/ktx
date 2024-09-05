@@ -32,7 +32,6 @@ class TestThreads:
                 ctx_in_thread.set("key2", "value2")
                 assert ctx_in_thread.get_data() == {"key2": "value2"}
 
-
         assert get_current_ctx_or_none() is None
         thread1 = Thread(target=f_thread1)
         thread2 = Thread(target=f_thread2)
