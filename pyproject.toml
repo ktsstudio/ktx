@@ -30,7 +30,6 @@ dependencies = [
 all = [
     "sentry-sdk>=2.11.0",
     "opentelemetry-api",
-    "opentelemetry-sdk",
 ]
 
 test = [
@@ -64,6 +63,7 @@ DEP002 = ["mypy", "ruff", "deptry", "coverage"]
 [tool.deptry.package_module_name_map]
 immutabledict = "immutabledict"
 sentry-sdk = "sentry_sdk"
+opentelemetry-api = "opentelemetry"
 
 [tool.ruff.format]
 # Аналогично black, двойные кавычки
