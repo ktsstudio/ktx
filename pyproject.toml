@@ -33,8 +33,7 @@ all = [
     "opentelemetry-sdk",
 ]
 
-[tool.uv]
-dev-dependencies = [
+test = [
     "coverage>=7.6.1",
     "pytest",
     "mypy",
@@ -60,9 +59,7 @@ check_untyped_defs = true
 [tool.pytest.ini_options]
 
 [tool.deptry.per_rule_ignores]
-DEP002 = ["mypy", "ruff", "deptry"]
-DEP003 = ["pytest"]
-DEP004 = []
+DEP002 = ["mypy", "ruff", "deptry", "coverage"]
 
 [tool.deptry.package_module_name_map]
 immutabledict = "immutabledict"
