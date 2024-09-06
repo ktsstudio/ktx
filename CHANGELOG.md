@@ -1,3 +1,6 @@
+# 0.2.2
+* remove opentelemetry-sdk from dependencies
+
 # 0.2.1
 * add `ctx` property to `ContextWrap`
 
