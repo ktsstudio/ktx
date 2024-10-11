@@ -1,11 +1,11 @@
 [project]
 name = "ktx"
-version = "0.2.2"
+version = "0.2.3"
 description = "context library"
 authors = [
     { name = "KTS", email = "hello@kts.tech" }
 ]
-license = { text = "Proprietary" }
+license = {file = "LICENSE"}
 
 # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers = [
@@ -24,6 +24,7 @@ requires-python = '>=3.10.0'
 readme = "README.md"
 dependencies = [
     "immutabledict",
+    "typing-extensions; python_version < '3.11'",
 ]
 
 [project.optional-dependencies]

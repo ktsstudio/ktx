@@ -1,8 +1,14 @@
-from typing import Any, Mapping, assert_type
+from typing import Any, Mapping
 
 from ktx import ctx_wrap
+from ktx._meta import PY311
 from ktx.abc import Context
 from ktx.user import ContextUser
+
+if PY311:
+    from typing import assert_type  # type: ignore[attr-defined]
+else:
+    from typing_extensions import assert_type
 
 
 class CustomContext(Context):

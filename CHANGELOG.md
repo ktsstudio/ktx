@@ -1,3 +1,7 @@
+# 0.2.3
+* move to github
+* change license to Apache 2.0
+
 # 0.2.2
 * remove opentelemetry-sdk from dependencies
 

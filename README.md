@@ -1,5 +1,8 @@
 # ktx - Shared context library
 
+[![Build](https://github.com/ktsstudio/ktx/actions/workflows/actions.yaml/badge.svg?branch=main)](https://github.com/ktsstudio/ktx/actions)
+[![PyPI](https://img.shields.io/pypi/v/ktx.svg)](https://pypi.python.org/pypi/ktx)
+
 ## Introduction
 
 ktx is a Context library aimed to simplify a process of creating and managing shared data in Python.
