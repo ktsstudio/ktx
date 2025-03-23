@@ -17,7 +17,7 @@ class TestLog:
         ctx.get_user().username = "some-username"
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
-            "uq_id": "some-trace-id",
+            "ktx_id": "some-trace-id",
             "data_attr1": "value1",
             "user_username": "some-username",
         }
@@ -30,7 +30,7 @@ class TestLog:
 
             assert ktx_add_log(event_dict) == {
                 **event_dict,
-                "uq_id": "some-trace-id",
+                "ktx_id": "some-trace-id",
                 "data_attr1": "value1",
                 "user_username": "some-username",
             }
@@ -43,8 +43,22 @@ class TestLog:
         ctx.get_user().username = "some-username"
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
-            "uq_id": "some-trace-id",
+            "ktx_id": "some-trace-id",
             "data_attr1": "value1",
+            "user_username": "some-username",
+        }
+
+    def test_log_private(self):
+        event_dict = {"some": "value"}
+        ctx = SimpleContext("some-trace-id")
+        ctx.data.attr1 = "value1"
+        ctx.data._attr2 = "value2"
+        ctx.get_user().username = "some-username"
+        assert ktx_add_log(event_dict, ctx, log_private=True) == {
+            **event_dict,
+            "ktx_id": "some-trace-id",
+            "data_attr1": "value1",
+            "data__attr2": "value2",
             "user_username": "some-username",
         }
 
@@ -56,8 +70,20 @@ class TestLog:
         ctx.data.attr1 = val
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
-            "uq_id": "some-trace-id",
+            "ktx_id": "some-trace-id",
             "data_attr1": str(val),
+        }
+
+    def test_str_value_different_prefix(self):
+        event_dict = {"some": "value"}
+        ctx = SimpleContext("some-trace-id")
+
+        val = uuid.uuid4()
+        ctx.data.attr1 = val
+        assert ktx_add_log(event_dict, ctx, data_key_prefix="something_") == {
+            **event_dict,
+            "ktx_id": "some-trace-id",
+            "something_attr1": str(val),
         }
 
     def test_none_values(self):
@@ -67,7 +93,7 @@ class TestLog:
         ctx.data.attr1 = None
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
-            "uq_id": "some-trace-id",
+            "ktx_id": "some-trace-id",
         }
 
     def test_user_id_non_str(self):
@@ -77,6 +103,6 @@ class TestLog:
         ctx.get_user().id = uuid.uuid4()
         assert ktx_add_log(event_dict, ctx) == {
             **event_dict,
-            "uq_id": "some-trace-id",
+            "ktx_id": "some-trace-id",
             "user_id": str(ctx.get_user().id),
         }

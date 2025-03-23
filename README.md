@@ -62,7 +62,7 @@ Context provides the following methods:
 - `get(key: str) -> Any`: get value by key
 - `get_data() -> Mapping[str, Any]`: get all shared data
 - `get_user() -> ContextUser`: get user object
-- `uq_id() -> str`: get unique id of context
+- `ktx_id() -> str`: get unique id of context
 
 ## Data Inheritance
 
@@ -108,15 +108,15 @@ from ktx.abc import Context
 
 
 class MyContext(Context):  # Note that inheritance is not required.
-    def __init__(self, uq_id: str, *, custom_field: str):
+    def __init__(self, ktx_id: str, *, custom_field: str):
         self.custom_field = custom_field
 
-        self._uq_id = uq_id
+        self._ktx_id = ktx_id
         self._data: dict[str, Any] = {}
         self._user = ContextUser()
 
-    def uq_id(self) -> str:
-        return self._uq_id
+    def ktx_id(self) -> str:
+        return self._ktx_id
 
     def get_data(self) -> Mapping[str, Any]:
         return {

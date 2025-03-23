@@ -17,7 +17,7 @@ class CustomContext(Context):
         self._data: dict[str, Any] = {}
         self._user = ContextUser()
 
-    def uq_id(self) -> str:
+    def ktx_id(self) -> str:
         return "uqid"
 
     def get_data(self) -> Mapping[str, Any]:

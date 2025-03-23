@@ -69,7 +69,7 @@ class TestSimpleData:
 class TestSimple:
     def test_make(self):
         ctx = SimpleContext("some-trace-id")
-        assert ctx.uq_id() == "some-trace-id"
+        assert ctx.ktx_id() == "some-trace-id"
         assert ctx.get_user() is not None
         assert isinstance(ctx.get_user(), ContextUser)
 
@@ -77,9 +77,9 @@ class TestSimple:
 
     def test_make_empty_trace(self):
         ctx = SimpleContext()
-        assert ctx.uq_id() is not None
-        assert ctx.uq_id() != "0x0"
-        assert isinstance(ctx.uq_id(), str)
+        assert ctx.ktx_id() is not None
+        assert ctx.ktx_id() != "0x0"
+        assert isinstance(ctx.ktx_id(), str)
 
     def test_make_with_user_data(self):
         user = ContextUser(username="some-username")
@@ -87,22 +87,22 @@ class TestSimple:
         data = SimpleContextData()
 
         ctx = SimpleContext("some-trace-id", user=user, data=data)
-        assert ctx.uq_id() == "some-trace-id"
+        assert ctx.ktx_id() == "some-trace-id"
         assert ctx.get_user() is user
         assert ctx.data is data
 
     def test_ctx_manager(self):
         assert get_current_ctx_or_none() is None
-        assert "uq_id" not in get_current_scope()._tags
+        assert "ktx_id" not in get_current_scope()._tags
 
         with ctx_wrap(SimpleContext()) as ctx:
             assert get_current_ctx_or_none() is ctx
             assert get_current_ctx_or_none(SimpleContext) is ctx
 
-            assert get_current_scope()._tags["uq_id"] == ctx.uq_id()
+            assert get_current_scope()._tags["ktx_id"] == ctx.ktx_id()
 
         assert get_current_ctx_or_none() is None
-        assert "uq_id" not in get_current_scope()._tags
+        assert "ktx_id" not in get_current_scope()._tags
 
     def test_inherit(self):
         with ctx_wrap(SimpleContext()) as parent_ctx:

@@ -36,8 +36,8 @@ class ContextWrap(Generic[ContextT], AbstractContextWrap[ContextT]):
             self._sentry_scope_cm = new_scope()
             if self._sentry_scope_cm is not None:
                 scope = self._sentry_scope_cm.__enter__()
-                scope.set_tag("uq_id", self._ctx.uq_id())
-                scope.set_extra("uq_id", self._ctx.uq_id())
+                scope.set_tag("ktx_id", self._ctx.ktx_id())
+                scope.set_extra("ktx_id", self._ctx.ktx_id())
 
         return self._ctx
 

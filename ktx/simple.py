@@ -1,10 +1,10 @@
 import uuid
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Protocol
 
 from immutabledict import immutabledict
 
-from ._meta import has_open_telemetry, has_sentry
+from ._meta import has_sentry
 from .abc import Context
 from .user import ContextUser
 from .vars import get_current_ctx_or_none
@@ -13,23 +13,12 @@ if has_sentry:
     import sentry_sdk
 
 
-def _get_uuid_uq_id() -> str:
+class KtxIdMaker(Protocol):
+    def __call__(self) -> str: ...
+
+
+def _get_uuid_ktx_id() -> str:
     return uuid.uuid4().hex
-
-
-if has_open_telemetry:
-    from opentelemetry import trace
-    from opentelemetry.trace import format_trace_id
-
-    def _get_uq_id() -> str:
-        trace_id = trace.get_current_span().get_span_context().trace_id
-        if trace_id != 0:
-            return format_trace_id(trace_id)
-
-        return _get_uuid_uq_id()
-
-else:
-    _get_uq_id = _get_uuid_uq_id
 
 
 class SimpleContextData:
@@ -61,21 +50,23 @@ class SimpleContextData:
 
 class SimpleContext(Context):
     __slots__ = [
-        "_uq_id",
+        "_ktx_id",
         "_user",
         "_data",
     ]
 
     def __init__(
         self,
-        uq_id: str | None = None,
+        ktx_id: str | None = None,
         *,
         inherit_user: bool = True,
         inherit_data: bool = True,
         user: ContextUser | None = None,
         data: SimpleContextData | None = None,
+        ktx_id_maker: KtxIdMaker | None = None,
     ):
-        self._uq_id = uq_id or _get_uq_id()
+        ktx_id_maker = ktx_id_maker or _get_uuid_ktx_id
+        self._ktx_id = ktx_id or ktx_id_maker()
         self._user = user or ContextUser()
         self._data = data or SimpleContextData()
 
@@ -88,8 +79,8 @@ class SimpleContext(Context):
                 if inherit_user:
                     self._user.copy_from(parent_ctx.get_user())
 
-    def uq_id(self) -> str:
-        return self._uq_id
+    def ktx_id(self) -> str:
+        return self._ktx_id
 
     @property
     def data(self) -> SimpleContextData:

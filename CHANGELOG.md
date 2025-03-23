@@ -1,3 +1,7 @@
+# 0.3.0
+* rename uq_id to ktx_id
+* remove opentelemetry dependency
+
 # 0.2.3
 * move to github
 * change license to Apache 2.0

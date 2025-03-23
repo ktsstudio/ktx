@@ -1,4 +1,4 @@
-.PHONY: mypy ruff style style-check test lint pytest
+.PHONY: mypy ruff style style-check test lint pytest sync
 
 package?=ktx tests
 
@@ -24,3 +24,6 @@ pytest:
 	pytest .
 
 test: lint pytest
+
+sync:
+	uv sync --all-extras

@@ -1,6 +1,6 @@
 [project]
 name = "ktx"
-version = "0.2.3"
+version = "0.3.0"
 description = "context library"
 authors = [
     { name = "KTS", email = "hello@kts.tech" }
@@ -30,7 +30,6 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "sentry-sdk>=2.11.0",
-    "opentelemetry-api",
 ]
 
 test = [
@@ -64,7 +63,6 @@ DEP002 = ["mypy", "ruff", "deptry", "coverage"]
 [tool.deptry.package_module_name_map]
 immutabledict = "immutabledict"
 sentry-sdk = "sentry_sdk"
-opentelemetry-api = "opentelemetry"
 
 [tool.ruff.format]
 # Аналогично black, двойные кавычки

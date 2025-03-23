@@ -10,6 +10,7 @@ def ktx_add_log(
     ctx: Context | None = None,
     *,
     log_private: bool = False,
+    data_key_prefix: str = "data_",
 ) -> MutableMapping[str, Any]:
     if ctx is None:
         ctx = get_current_ctx_or_none()
@@ -28,7 +29,7 @@ def ktx_add_log(
 
     for k, v in data_dict_iter:
         if v is not None:
-            event_dict[f"data_{k}"] = str(v)
+            event_dict[f"{data_key_prefix}{k}"] = str(v)
 
     user = ctx.get_user()
     if user.id is not None:
@@ -40,6 +41,6 @@ def ktx_add_log(
     if user.ip is not None:
         event_dict["user_ip"] = user.ip
 
-    event_dict["uq_id"] = ctx.uq_id()
+    event_dict["ktx_id"] = ctx.ktx_id()
 
     return event_dict
