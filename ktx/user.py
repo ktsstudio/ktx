@@ -1,30 +1,14 @@
+from collections.abc import Sequence
 from typing import Any
 
-from ._meta import has_sentry
-
-if has_sentry:
-    from sentry_sdk import get_isolation_scope
-
-    def sentry_set_user_key(key: str, value: Any):
-        scope = get_isolation_scope()
-        if scope._user is None:
-            scope._user = {}
-        scope._user[key] = value
-
-    def sentry_set_user(user: dict[str, Any]):
-        scope = get_isolation_scope()
-        scope.set_user(user)
-
-else:
-
-    def sentry_set_user_key(key: str, value: Any):
-        pass
-
-    def sentry_set_user(user: dict[str, Any]):
-        pass
+from .abc import (
+    AbstractContextDataAdapter,
+    AbstractContextUser,
+    AbstractContextUserFactory,
+)
 
 
-class ContextUser:
+class ContextUser(AbstractContextUser):
     __slots__ = [
         "_id",
         "_email",
@@ -39,67 +23,59 @@ class ContextUser:
         email: str | None = None,
         username: str | None = None,
         ip: str | None = None,
+        adapters: Sequence[AbstractContextDataAdapter] | None = None,
     ):
         self._id = id
         self._email = email
         self._username = username
         self._ip = ip
+        self._adapters = adapters
 
-    def copy_from(self, other: "ContextUser") -> None:
-        self._id = other.id
-        self._email = other.email
-        self._username = other.username
-        self._ip = other.ip
-
-    def set_sentry_user(self):
-        sentry_set_user(
-            {
-                "id": self._id,
-                "email": self._email,
-                "username": self._username,
-                "ip_address": self._ip,
-            }
-        )
-
-    @property
-    def id(self) -> Any:
+    def get_id(self) -> Any:
         return self._id
 
-    @id.setter
-    def id(self, value: Any):
-        self._id = value
-        self._post_apply_user_key("id", value)
-        sentry_set_user_key("id", value)
-
-    @property
-    def email(self) -> str | None:
-        return self._email
-
-    @email.setter
-    def email(self, value: str | None):
-        self._email = value
-        self._post_apply_user_key("email", value)
-        sentry_set_user_key("email", value)
-
-    @property
-    def username(self) -> str | None:
+    def get_username(self) -> str | None:
         return self._username
 
-    @username.setter
-    def username(self, value: str | None):
-        self._username = value
-        self._post_apply_user_key("username", value)
-        sentry_set_user_key("username", value)
+    def get_email(self) -> str | None:
+        return self._email
 
-    @property
-    def ip(self) -> str | None:
+    def get_ip_address(self) -> str | None:
         return self._ip
 
-    @ip.setter
-    def ip(self, value: str | None):
+    def set_id(self, value: Any) -> None:
+        self._id = value
+        self._post_apply_user_key("id", value)
+
+    def set_email(self, value: str | None) -> None:
+        self._email = value
+        self._post_apply_user_key("email", value)
+
+    def set_username(self, value: str | None) -> None:
+        self._username = value
+        self._post_apply_user_key("username", value)
+
+    def set_ip_address(self, value: str | None) -> None:
         self._ip = value
-        self._post_apply_user_key("ip", value)
-        sentry_set_user_key("ip_address", value)
+        self._post_apply_user_key("ip_address", value)
 
     def _post_apply_user_key(self, key: str, value: Any):
-        pass
+        if self._adapters is not None:
+            for adapter in self._adapters:
+                adapter.set(key, value)
+
+
+class ContextUserFactory(AbstractContextUserFactory[ContextUser]):
+    __slots__ = [
+        "_adapters",
+    ]
+
+    def __init__(
+        self,
+        *,
+        adapters: Sequence[AbstractContextDataAdapter] | None = None,
+    ):
+        self._adapters = adapters
+
+    def create(self) -> ContextUser:
+        return ContextUser(adapters=self._adapters)

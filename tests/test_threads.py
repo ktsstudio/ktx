@@ -1,8 +1,8 @@
 import time
 from threading import Thread
 
-from ktx import ctx_wrap, get_current_ctx_or_none
-from ktx.simple import SimpleContext
+from ktx import ctx_bind, get_current_ctx_or_none
+from ktx.ctx import Context
 
 
 class TestThreads:
@@ -15,7 +15,7 @@ class TestThreads:
         def f_thread1():
             nonlocal called1
             called1 = True
-            with ctx_wrap(SimpleContext()):
+            with ctx_bind(Context("id1")):
                 ctx_in_thread = get_current_ctx_or_none()
                 assert ctx_in_thread is not None
 
@@ -25,7 +25,7 @@ class TestThreads:
         def f_thread2():
             nonlocal called2
             called2 = True
-            with ctx_wrap(SimpleContext()):
+            with ctx_bind(Context("id1")):
                 ctx_in_thread = get_current_ctx_or_none()
                 assert ctx_in_thread is not None
 

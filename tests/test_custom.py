@@ -1,24 +1,24 @@
 from typing import Any, Mapping
 
-from ktx import ctx_wrap
+from ktx import ctx_bind
 from ktx._meta import PY311
-from ktx.abc import Context
+from ktx.abc import AbstractContext
 from ktx.user import ContextUser
 
 if PY311:
-    from typing import assert_type  # type: ignore[attr-defined]
+    from typing import assert_type  # type: ignore[attr-defined]  # pragma: no cover
 else:
-    from typing_extensions import assert_type
+    from typing_extensions import assert_type  # pragma: no cover
 
 
-class CustomContext(Context):
+class CustomContext(AbstractContext):
     def __init__(self, *, custom_field: str):
         self._custom_field = custom_field
         self._data: dict[str, Any] = {}
         self._user = ContextUser()
 
     def ktx_id(self) -> str:
-        return "uqid"
+        return "uqid"  # pragma: no cover
 
     def get_data(self) -> Mapping[str, Any]:
         return {
@@ -26,11 +26,8 @@ class CustomContext(Context):
             "custom_field": self._custom_field,
         }
 
-    def get_user(self) -> ContextUser:
-        return self._user
-
     def get(self, key: str) -> Any:
-        return self._data.get(key)
+        return self._data.get(key)  # pragma: no cover
 
     def set(self, key: str, value: Any):
         self._data[key] = value
@@ -49,7 +46,7 @@ class TestCustomContext:
         }
 
     def test_custom_wrap(self):
-        with ctx_wrap(CustomContext(custom_field="value1")) as ctx:
+        with ctx_bind(CustomContext(custom_field="value1")) as ctx:
             assert_type(ctx, CustomContext)
             assert isinstance(ctx, CustomContext)
 

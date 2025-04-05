@@ -1,6 +1,6 @@
 [project]
 name = "ktx"
-version = "0.3.0"
+version = "0.4.0"
 description = "context library"
 authors = [
     { name = "KTS", email = "hello@kts.tech" }
@@ -28,7 +28,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-all = [
+sentry = [
     "sentry-sdk>=2.11.0",
 ]
 

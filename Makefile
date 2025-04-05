@@ -2,6 +2,8 @@
 
 package?=ktx tests
 
+all: sync style test
+
 style:
 	ruff format $(package)
 	ruff check --select I --fix $(package)
