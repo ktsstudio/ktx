@@ -163,7 +163,26 @@ There is a helper function `ktx.log.ktx_add_log` useful for [structlog](https://
 
 ## Custom context
 
-It is possible to define a custom Context class in order to better support strong typing. You would need to implement `ktx.abc.`Context protocol and then you may use it with `ctx_bind` functions as usual.
+It is possible to define a custom Context class in order to better support strong typing. You would need to implement the `ktx.abc.AbstractContext` protocol and then you may use it with `ctx_bind` functions as usual.
+
+For fields backed by `get()` and `set()`, use `KtxProperty`:
+
+```python
+from ktx import KtxProperty
+from ktx.ctx import Context
+
+
+class OrderContext(Context):
+    order_id: KtxProperty[int] = KtxProperty[int]()
+    user_id: KtxProperty[int | None] = KtxProperty[int | None]()
+    external_id: KtxProperty[str | None] = KtxProperty[str | None](alias="legacy_id")
+```
+
+The type checker sees `ctx.order_id` as `int`. Assignments and reads are also
+checked at runtime. An unset optional field returns `None`; an unset required
+field raises `AttributeError`. Use the type argument on both sides so runtime
+validation can read it. Parameterized containers such as `list[int]` are not
+supported by the runtime check.
 
 Note that you would need to implement general `get()` and `set()` methods for arbitrary fields as they may be accessed by other libraries which are using `Context`.
 
@@ -221,4 +240,3 @@ with ctx_bind(MyContext("id1")) as ctx:
 
     assert get_current_ctx(MyContext) is ctx
 ```
-

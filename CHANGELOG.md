@@ -1,3 +1,6 @@
+# 0.5.0
+* Added typed `KtxProperty` for context fields with alias and type checking at runtime
+
 # 0.4.0
 Breaking changes:
 * rename `Context` protocol to `AbstractContext`
