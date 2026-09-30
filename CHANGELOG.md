@@ -1,3 +1,11 @@
+# 0.5.0
+Breaking changes:
+* Public annotated fields in `Context` subclasses now require an explicit default (`= None` or another value). Existing declarations without a default raise `TypeError` when the class is created; custom `AbstractContext` implementations and `Context` subclasses without such declarations are unaffected.
+
+New features:
+* `ContextFactory` can create a typed `Context` subclass with `context_type`
+* Public annotated fields in a `Context` subclass use `get()` and `set()` and are present in `get_data()` from creation; mutable defaults are copied per instance
+
 # 0.4.0
 Breaking changes:
 * rename `Context` protocol to `AbstractContext`
