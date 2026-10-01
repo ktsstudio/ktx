@@ -117,7 +117,7 @@ async def main():
     await task1
 ````
 
-There exists an abstract interface (Protocol) for any "kind of Contex", so you may implement your own Context classes by implementing `ktx.abc.Context` protocol:
+There is an `AbstractContext` protocol for custom context implementations:
 
 
 ## API
@@ -163,7 +163,40 @@ There is a helper function `ktx.log.ktx_add_log` useful for [structlog](https://
 
 ## Custom context
 
-It is possible to define a custom Context class in order to better support strong typing. You would need to implement `ktx.abc.`Context protocol and then you may use it with `ctx_bind` functions as usual.
+It is possible to define a custom Context class in order to better support strong typing. You would need to implement the `ktx.abc.AbstractContext` protocol and then you may use it with `ctx_bind` functions as usual.
+
+Public fields declared with type annotations and explicit defaults in a
+`Context` subclass are backed by `get()` and `set()` automatically:
+
+```python
+from ktx.ctx import Context, ContextFactory
+
+
+class OrderContext(Context):
+    order_id: int | None = 42
+    user_id: int | None = None
+
+
+ctx = ContextFactory(context_type=OrderContext).create()
+assert ctx.order_id == 42
+assert ctx.get_data() == {"order_id": 42, "user_id": None}
+ctx.order_id = 43
+assert ctx.get("order_id") == 43
+assert ctx.get_data()["user_id"] is None
+```
+
+Every declared field requires an explicit default, including `= None` when
+there is no initial value. Missing defaults raise `TypeError` when the class
+is created (typically during module import). All declared fields are included
+in `get_data()` immediately. Defaults are copied into each new context,
+including mutable values, and inherited defaults can be overridden by a
+subclass or by `data` passed to the constructor.
+Annotate them with `T | None` so the type checker requires a check before use;
+Ktx cannot add `None` to a static annotation automatically. Ktx does not
+validate field types at runtime, and `set()` also accepts arbitrary values.
+Names starting with `_` are not treated as context fields.
+Existing `Context` subclasses with public bare annotations now store those
+fields in context data.
 
 Note that you would need to implement general `get()` and `set()` methods for arbitrary fields as they may be accessed by other libraries which are using `Context`.
 
@@ -216,9 +249,8 @@ And then you may use this `MyContext` in safe manner like this:
 ```python
 from ktx import ctx_bind, get_current_ctx
 
-with ctx_bind(MyContext("id1")) as ctx:
-    ctx.custom_field = "value1"
+with ctx_bind(MyContext("id1", custom_field="value1")) as ctx:
+    assert ctx.custom_field == "value1"
 
     assert get_current_ctx(MyContext) is ctx
 ```
-

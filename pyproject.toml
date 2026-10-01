@@ -1,6 +1,6 @@
 [project]
 name = "ktx"
-version = "0.4.0"
+version = "0.5.0"
 description = "context library"
 authors = [
     { name = "KTS", email = "hello@kts.tech" }

@@ -70,6 +70,16 @@ class TestGeneralContext:
         assert ctx2.get("attr1") == "val1"
         assert ctx2.get("attr2") == "val2"
 
+    def test_existing_subclass_with_custom_init(self):
+        class MyContext(Context):
+            def __init__(self, ktx_id: str, *, custom_field: str):
+                super().__init__(ktx_id)
+                self.custom_field = custom_field
+
+        with ctx_bind(MyContext("id1", custom_field="value1")) as ctx:
+            assert ctx.custom_field == "value1"
+            assert get_current_ctx(MyContext) is ctx
+
 
 class TestContextFactory:
     def test_create_context(self):
